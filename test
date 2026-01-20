@@ -1,0 +1,43 @@
+import pickle
+import pandas as pd
+
+# -----------------------------
+# 1. Load trained model & encoder
+# -----------------------------
+with open("plant_risk_rf_model.pkl", "rb") as f:
+    model = pickle.load(f)
+
+with open("plant_risk_label_encoder.pkl", "rb") as f:
+    label_encoder = pickle.load(f)
+
+# -----------------------------
+# 2. Take input from user
+# -----------------------------
+print("\nEnter Plant Environment Values:")
+
+temperature = float(input("Temperature (°C): "))
+humidity = float(input("Humidity (%): "))
+soil_moisture = float(input("Soil Moisture (%): "))
+
+# -----------------------------
+# 3. Create input dataframe
+# -----------------------------
+input_data = pd.DataFrame([{
+    "Temperature_C": temperature,
+    "Humidity_Pct": humidity,
+    "Soil_Moisture_Pct": soil_moisture
+}])
+
+# -----------------------------
+# 4. Model prediction (analysis)
+# -----------------------------
+prediction_encoded = model.predict(input_data)
+
+prediction_label = label_encoder.inverse_transform(prediction_encoded)
+
+# -----------------------------
+# 5. Display result
+# -----------------------------
+print("\n🌱 Plant Risk Analysis Result")
+print("--------------------------------")
+print(f"Predicted Risk Level: {prediction_label[0]}")
